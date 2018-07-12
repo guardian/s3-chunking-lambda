@@ -1,0 +1,59 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: Splits s3 files into smaller parts
+
+Parameters:
+  Stack:
+    Description: Stack name
+    Type: String
+    Default: content-api
+  App:
+    Description: Application name
+    Type: String
+    Default: s3-chunking-lambda
+  Stage:
+    Description: Stage name
+    Type: String
+    AllowedValues:
+      - CODE
+      - PROD
+  OutputBucket:
+    Description: Bucket to copy files to
+    Type: String
+    Default: gu-audio-logs
+  DeployBucket:
+    Description: Bucket to copy files to
+    Type: String
+    Default: content-api-dist
+  MaxObjectSize:
+    Description: Objects above this size in kb will be split
+    Type: Number
+Resources:
+  Lambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${App}-${Stage}
+      Description: Splits s3 files into smaller parts
+      Runtime: nodejs8.10
+      Handler: lambda.handler
+      MemorySize: 128
+      Timeout: 300
+      Environment:
+        Variables:
+          Bucket: !Ref OutputBucket
+          MaxObjectSize: !Ref MaxObjectSize
+      CodeUri:
+        Bucket: !Ref DeployBucket
+        Key: !Sub ${Stack}/${Stage}/${App}/${App}.zip
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            Effect: Allow
+            Action:
+              - s3:PutObject
+              - s3:GetObject
+              - s3:ListObjects
+            Resource:
+              - !Sub "arn:aws:s3::*:${OutputBucket}/*"
+              - arn:aws:s3::*:fastly-logs-audio/*
+              - arn:aws:s3::*:acast-logs-audio/*
