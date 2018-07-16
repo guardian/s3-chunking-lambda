@@ -26,7 +26,7 @@ Parameters:
     Type: String
     Default: content-api-dist
   MaxObjectSize:
-    Description: Objects above this size in kb will be split
+    Description: Objects above this size in mb will be split
     Type: Number
 Resources:
   Lambda:
@@ -57,3 +57,4 @@ Resources:
               - !Sub "arn:aws:s3::*:${OutputBucket}/*"
               - arn:aws:s3::*:fastly-logs-audio/*
               - arn:aws:s3::*:acast-logs-audio/*
+              - arn:aws:s3::*:gu-test-audio-logs/*
