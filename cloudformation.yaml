@@ -55,6 +55,7 @@ Resources:
               - s3:ListObjects
             Resource:
               - !Sub "arn:aws:s3::*:${OutputBucket}/*"
+              - !Sub "arn:aws:s3::*:${OutputBucket}"
               - arn:aws:s3::*:fastly-logs-audio/*
               - arn:aws:s3::*:acast-logs-audio/*
               - arn:aws:s3::*:gu-test-audio-logs/*
