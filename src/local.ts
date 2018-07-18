@@ -1,6 +1,11 @@
 import { handler } from './lambda';
 let AWS = require('aws-sdk');
 
+/**
+ * For testing locally:
+ * `yarn run local <source bucket> <object key> <file size in kb>`
+ */
+
 AWS.config = new AWS.Config();
 AWS.config.accessKeyId = process.env.AWS_ACCESS_KEY_ID;
 AWS.config.secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
@@ -9,6 +14,8 @@ AWS.config.region = "eu-west-1";
 
 async function run(event) {
     await handler(event)
+        .then(result => console.log(result))
+        .catch(err => console.log(err))
 }
 
 run({
@@ -16,11 +23,11 @@ run({
         {
             s3: {
                 bucket: {
-                    name: "gu-test-audio-logs"
+                    name: process.argv[2]
                 },
                 object: {
-                    key: "ls.s3.7a409d84-849d-4e01-80b1-935d492a79ab.2018-07-11T00.32.part0.txt",
-                    size: 24223316
+                    key: process.argv[3],
+                    size: process.argv[4]
                 }
             }
         }
