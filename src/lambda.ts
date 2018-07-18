@@ -11,18 +11,18 @@ let readline = require('readline');
 let AWS = require('aws-sdk');
 let s3 = new AWS.S3();
 
-let MaxKb = parseInt(process.env.MaxObjectSize)*1000;
+let MaxBytes = parseInt(process.env.MaxObjectSize)*1000*1000;
 
 export async function handler(event) {
     return Promise.all(
         event.Records.map(record => {
             let bucket = record.s3.bucket.name;
             let key = record.s3.object.key.replace(/%3A/g, ':');
-            let sizeKb = record.s3.object.size;
+            let sizeBytes = record.s3.object.size;
 
-            console.log(`Copying ${bucket}/${key} with size ${sizeKb}`);
+            console.log(`Copying ${bucket}/${key} with size ${sizeBytes}`);
 
-            if (sizeKb > MaxKb) {
+            if (sizeBytes > MaxBytes) {
                 return splitFile(bucket, key)
             } else {
                 return copy(bucket, key)
@@ -32,7 +32,7 @@ export async function handler(event) {
 }
 
 /**
- * Streams the source file, splitting it into files with size ~MaxKb and streaming each to the target bucket.
+ * Streams the source file, splitting it into files with size ~MaxBytes and streaming each to the target bucket.
  * Note - the result is non-deterministic because output file sizes and even the number of files may vary,
  * but all of the data will be copied.
  */
@@ -69,7 +69,7 @@ function splitFile(sourceBucket: string, key: string): Promise<Array<ManagedUplo
         reader.on('line', (line: string) => {
             outputStream.write(line + '\n');
 
-            if (outputStream.bytesWritten > MaxKb * 1000) {
+            if (outputStream.bytesWritten > MaxBytes) {
                 //Begin writing to a new file stream before closing the old one
                 let oldOutputStream = outputStream;
                 outputStream = fs.createWriteStream(`/tmp/${buildFileName(fileNumber + 1)}`);

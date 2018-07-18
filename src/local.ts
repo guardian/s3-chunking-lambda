@@ -3,7 +3,7 @@ let AWS = require('aws-sdk');
 
 /**
  * For testing locally:
- * `yarn run local <source bucket> <object key> <file size in kb>`
+ * `yarn run local <source bucket> <object key> <file size in bytes>`
  */
 
 AWS.config = new AWS.Config();
