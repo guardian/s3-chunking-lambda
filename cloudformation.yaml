@@ -28,6 +28,9 @@ Parameters:
   MaxObjectSize:
     Description: Objects above this size in mb will be split
     Type: Number
+  SourceBuckets:
+    Description: List of the source bucket ARN permissions, e.g. 'arn:aws:s3::*:my-source-bucket-1/*,arn:aws:s3::*:my-source-bucket-2/*'
+    Type: CommaDelimitedList
 Resources:
   Lambda:
     Type: AWS::Serverless::Function
@@ -50,12 +53,13 @@ Resources:
         - Statement:
             Effect: Allow
             Action:
-              - s3:PutObject
               - s3:GetObject
               - s3:ListObjects
             Resource:
+              !Ref SourceBuckets
+        - Statement:
+            Effect: Allow
+            Action:
+              - s3:PutObject
+            Resource:
               - !Sub "arn:aws:s3::*:${OutputBucket}/*"
-              - !Sub "arn:aws:s3::*:${OutputBucket}"
-              - arn:aws:s3::*:fastly-logs-audio/*
-              - arn:aws:s3::*:acast-logs-audio/*
-              - arn:aws:s3::*:gu-test-audio-logs/*

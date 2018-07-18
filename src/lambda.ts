@@ -32,7 +32,7 @@ export async function handler(event) {
 }
 
 /**
- * Streams the source file, splitting it into files with size MaxKb and streaming each to the target bucket.
+ * Streams the source file, splitting it into files with size ~MaxKb and streaming each to the target bucket.
  * Note - the result is non-deterministic because output file sizes and even the number of files may vary,
  * but all of the data will be copied.
  */
