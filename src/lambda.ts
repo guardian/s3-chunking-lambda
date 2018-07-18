@@ -17,7 +17,7 @@ export async function handler(event) {
     return Promise.all(
         event.Records.map(record => {
             let bucket = record.s3.bucket.name;
-            let key = record.s3.object.key;
+            let key = record.s3.object.key.replace(/%3A/g, ':');
             let sizeKb = record.s3.object.size;
 
             console.log(`Copying ${bucket}/${key} with size ${sizeKb}`);
