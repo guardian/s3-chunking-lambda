@@ -1,0 +1,11 @@
+stacks: [content-api-]
+regions: [eu-west-1]
+
+deployments:
+  s3-chunking-lambda:
+    type: aws-lambda
+    parameters:
+      prefixStack: false
+      bucket: content-api-dist
+      fileName: s3-chunking-lambda.zip
+      functionNames: [s3-chunking-lambda-]
