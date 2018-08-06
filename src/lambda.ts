@@ -50,7 +50,15 @@ function splitFile(sourceBucket: string, key: string): Promise<Array<ManagedUplo
         input: inputStream
     });
 
-    let outputStream: WriteStream = fs.createWriteStream(`/tmp/${buildFileName(fileNumber)}`);
+    let outputStreamOptions = {
+        /**
+         * The stream has a small buffer, but occasionally in AWS lambda this overflows so just make it huge.
+         * TODO - implement stream properly with back-pressure?
+         */
+        highWaterMark: MaxBytes
+    };
+
+    let outputStream: WriteStream = fs.createWriteStream(`/tmp/${buildFileName(fileNumber)}`, outputStreamOptions);
 
     let readerResult: Promise<Array<Promise<ManagedUpload.SendData>>> = new Promise((resolve, reject) => {
         let s3UploadResults: Array<Promise<ManagedUpload.SendData>> = [];
@@ -72,7 +80,7 @@ function splitFile(sourceBucket: string, key: string): Promise<Array<ManagedUplo
             if (outputStream.bytesWritten > MaxBytes) {
                 //Begin writing to a new file stream before closing the old one
                 let oldOutputStream = outputStream;
-                outputStream = fs.createWriteStream(`/tmp/${buildFileName(fileNumber + 1)}`);
+                outputStream = fs.createWriteStream(`/tmp/${buildFileName(fileNumber + 1)}`, outputStreamOptions);
 
                 oldOutputStream.end();
                 uploadToS3(fileNumber++);
