@@ -39,7 +39,7 @@ Resources:
       Description: Splits s3 files into smaller parts
       Runtime: nodejs8.10
       Handler: lambda.handler
-      MemorySize: 128
+      MemorySize: 512
       Timeout: 300
       Environment:
         Variables:
