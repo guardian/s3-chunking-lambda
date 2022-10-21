@@ -1,0 +1,59 @@
+# Initiate a github actions-initiated build
+name: Build and upload artifact on push to any branch
+on:
+  push: {}
+  workflow_dispatch: {}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      checks: write
+      issues: read
+      pull-requests: write
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Prepare Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+      # Seed the build number with last number from TeamCity.
+      - name: Update GITHUB_RUN_NUMBER
+        run: |
+          LAST_TEAMCITY_BUILD=50
+          echo GITHUB_RUN_NUMBER=$(( $GITHUB_RUN_NUMBER + $LAST_TEAMCITY_BUILD )) >> $GITHUB_ENV
+      # now following example at https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs#example-using-yarn
+      - name: Install dependencies with yarn
+        run: yarn
+      - name: Clean and build target
+        run: |
+          yarn run clean
+          yarn run build
+      - name: Copy package.json to target
+        run: cp package.json target
+      - name: Prepare the bundle
+        run: |
+          mkdir -p dist
+          cd target
+          yarn --production
+          zip -r ../dist/s3-chunking-lambda.zip *
+      - name: Acquire RiffRaff AWS role
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: eu-west-1
+          role-to-assume: ${{ secrets.GU_RIFF_RAFF_ROLE_ARN }}
+          role-session-name: s3-chunking-lambda-build
+      - name: Send the .zip and riff-raff.yaml files from dist to S3
+        uses: guardian/actions-riff-raff@v2
+        with:
+          # use projectName to override use of riff-raff.yaml's stack value as S3 prefix
+          projectName: Off-Platform::s3-chunking-lambda
+          configPath: riff-raff.yaml
+          buildNumber: ${{ env.GITHUB_RUN_NUMBER }}
+          contentDirectories: |
+            s3-chunking-lambda:
+              - dist/s3-chunking-lambda.zip
+            cloudformation:
+              - cloudformation.yaml
