@@ -6,6 +6,6 @@ deployments:
     type: aws-lambda
     parameters:
       prefixStack: false
-      bucket: content-api-dist
+      bucketSsmLookup: true
       fileName: s3-chunking-lambda.zip
       functionNames: [s3-chunking-lambda-]
