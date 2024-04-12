@@ -10,3 +10,12 @@ Set environment variables `MaxObjectSize` (in mb) and `Bucket` (the destination 
 
 Run: 
 `yarn run local <source bucket> <object key> <file size in bytes>`
+
+If you are not able to run and encounter issue related to config saying "Missing credentials in the config..."
+Then please try using AWS profile before yarn:
+`AWS_PROFILE=<aws-profile-name> yarn run local <source bucket> <object key> <file size in bytes>`
+
+If you struggle with permission errors for your AWS profile for using S3 bucket and object in it.
+then you can always try using "Dev Playground" AWS profile and create S3 bucket and test object in it 
+like `AWS_PROFILE=developerPlayground yarn run local <source bucket> <object key> <file size in bytes>`
+
