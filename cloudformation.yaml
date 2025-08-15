@@ -37,7 +37,7 @@ Resources:
     Properties:
       FunctionName: !Sub ${App}-${Stage}
       Description: Splits s3 files into smaller parts
-      Runtime: nodejs18.x
+      Runtime: nodejs20.x
       Handler: lambda.handler
       MemorySize: 128
       Timeout: 300
