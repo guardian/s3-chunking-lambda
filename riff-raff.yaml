@@ -4,8 +4,17 @@ regions: [eu-west-1]
 deployments:
   s3-chunking-lambda:
     type: aws-lambda
+    dependencies: [cloudformation]
     parameters:
       prefixStack: false
       bucketSsmLookup: true
       fileName: s3-chunking-lambda.zip
       functionNames: [s3-chunking-lambda-]
+  cloudformation:
+    type: cloud-formation
+    app: s3-chunking-lambda
+    parameters:
+      prependStackToCloudFormationStackName: false
+      cloudFormationStackName: s3-chunking-lambda
+      templatePath: cloudformation.yaml
+      cloudFormationStackByTags: false
