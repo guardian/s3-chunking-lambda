@@ -9,7 +9,7 @@
     "node": ">=20.9.0"
   },
   "dependencies": {
-    "aws-sdk": "^2.950.0"
+    "aws-sdk": "^2.953.0"
   },
   "devDependencies": {
     "@types/node": "^16.4.0",
