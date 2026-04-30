@@ -1,4 +1,3 @@
-# This action runs snyk monitor on every push to main
 name: Snyk
 
 on:
@@ -9,10 +8,18 @@ on:
 
 jobs:
   security:
-    uses: guardian/.github/.github/workflows/sbt-node-snyk.yml@main
-    with:
-      DEBUG: true
-      ORG: guardian-capi 
-      SKIP_NODE: false
-    secrets:
-       SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Snyk monitor
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: monitor
+          args: --org=guardian-capi --severity-threshold=high
