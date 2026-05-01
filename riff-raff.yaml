@@ -9,9 +9,9 @@ deployments:
       templatePath: cloudformation.yaml
   s3-chunking-lambda:
     type: aws-lambda
+    dependencies: [cfn]
     parameters:
       prefixStack: false
       bucketSsmLookup: true
       fileName: s3-chunking-lambda.zip
       functionNames: [s3-chunking-lambda-]
-      dependencies: [cfn]
