@@ -16,3 +16,4 @@ deployments:
       bucketSsmLookup: true
       fileName: s3-chunking-lambda.zip
       functionNames: [s3-chunking-lambda-]
+      dependencies: [cfn]
