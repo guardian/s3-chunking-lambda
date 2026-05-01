@@ -6,9 +6,7 @@ deployments:
     type: cloud-formation
     app: s3-chunking-lambda
     parameters:
-      templateStagePaths:
-        CODE: cloudformation.yaml
-        PROD: cloudformation.yaml
+      templatePath: cloudformation.yaml
   s3-chunking-lambda:
     type: aws-lambda
     parameters:
