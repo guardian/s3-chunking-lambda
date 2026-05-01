@@ -2,6 +2,13 @@ stacks: [content-api]
 regions: [eu-west-1]
 
 deployments:
+  cfn:
+    type: cloud-formation
+    app: s3-chunking-lambda
+    parameters:
+      templateStagePaths:
+        CODE: cloudformation.yaml
+        PROD: cloudformation.yaml
   s3-chunking-lambda:
     type: aws-lambda
     parameters:
