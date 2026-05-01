@@ -28,9 +28,11 @@ Parameters:
   MaxObjectSize:
     Description: Objects above this size in mb will be split
     Type: Number
+    Default: 6
   SourceBuckets:
     Description: List of the source bucket ARN permissions, e.g. 'arn:aws:s3::*:my-source-bucket-1/*,arn:aws:s3::*:my-source-bucket-2/*'
     Type: CommaDelimitedList
+    Default: arn:aws:s3::*:fastly-logs-audio/*,arn:aws:s3::*:gu-test-audio-logs/*
 Resources:
   Lambda:
     Type: AWS::Serverless::Function
