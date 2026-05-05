@@ -55,5 +55,5 @@ jobs:
           contentDirectories: |
             s3-chunking-lambda:
               - dist/s3-chunking-lambda.zip
-            cloudformation:
+            cfn:
               - cloudformation.yaml
